@@ -1,13 +1,19 @@
 class Solver {
-  constructor(maze) {
-    this.cellArray = maze.cellArray;
+  constructor(grid) {
+    this.cellArray = grid.cellArray;
+    this.reset();
+  }
+
+  reset() {
     for (let i = 0; i < this.cellArray.length; i++) {
       for (let j = 0; j < this.cellArray[0].length; j++) {
-        this.cellArray[i][j].visited = false;
+        this.cellArray[i][j].reset();
       }
     }
+
     this.current = this.cellArray[0][0];
     this.goal = this.cellArray[this.cellArray.length - 1][this.cellArray[0].length - 1];
+    this.cellArray[this.cellArray.length - 1][this.cellArray[0].length - 1].goal = true;
     this.current.distance = 0;
     this.toVisit = [this.current];
     this.lastCurrent = this.current;

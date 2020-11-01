@@ -1,19 +1,19 @@
 import { Cell } from './cell.js';
 
 class Maze {
-  constructor(width, height, cellWidth) {
-    this.width = width;
-    this.height = height;
-    this.cellWidth = cellWidth;
-    this.cellArray = [];
-    this.completed = false;
-    for (let r = 0; r < this.height; r++) {
-      let row = []
-      for (let c = 0; c < this.width; c++) {
-        row.push(new Cell(c, r, cellWidth));
-      }
+  constructor(grid) {
+    this.cellArray = grid.cellArray;
+    this.height = this.cellArray.length;
+    this.width = this.cellArray[0].length;
+    this.reset();
+  }
 
-      this.cellArray.push(row);
+  reset() {
+    this.completed = false;
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        this.cellArray[i][j].reset();
+      }
     }
 
     // Generate starting cell.
@@ -97,20 +97,6 @@ class Maze {
     } else {
       this.completed = true;
     }
-  }
-
-  draw() {
-    fill(0);
-    for (const row of this.cellArray) {
-      for (const cell of row) {
-        cell.draw();
-      }
-    }
-  
-    textSize(14);
-    noStroke();
-    fill(0);
-    text("<- Goal", this.cellWidth * this.width, this.cellWidth * (this.height - .25));
   }
 }
 

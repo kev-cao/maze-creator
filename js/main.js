@@ -1,32 +1,45 @@
 import { Maze } from './maze.js';
 import { Solver } from './solver.js';
+import { Grid } from './grid.js';
 
-const CANVAS_WIDTH = 1000;
-const CANVAS_HEIGHT = 800;
-const GRID_PIXEL_WIDTH = 900;
-const GRID_PIXEL_HEIGHT = 700;
-const GRID_WIDTH = 45;
-const GRID_HEIGHT = 35;
-const CELL_SIZE = Math.floor(Math.min(GRID_PIXEL_WIDTH / GRID_WIDTH, GRID_PIXEL_HEIGHT / GRID_HEIGHT));
+let canvas_width = 1100;
+let canvas_height = 800;
+let grid_pixel_width = 900; let grid_pixel_height = 700;
+let grid_width = 45;
+let grid_height = 35;
+let cell_size = Math.floor(Math.min(grid_pixel_width / grid_width, grid_pixel_height / grid_height));
 
-let maze, solver;
+let isGenerating = false;
+
+let grid, maze, solver;
 
 window.setup = function setup() {
-  createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT);
-  maze = new Maze(GRID_WIDTH, GRID_HEIGHT, CELL_SIZE);
+  createCanvas(canvas_width, canvas_height);
+  grid = new Grid(grid_width, grid_height, cell_size);
+  solver = new Solver(grid);
+  maze = new Maze(grid);
+
+  // Create buttons.
+  let mazeButton = createButton('Generate Maze');
+  mazeButton.position(grid_pixel_width + 20, 20);
+  mazeButton.mousePressed(createMaze);
 }
 
 window.draw = function draw() {
   background(84, 172, 227);
-  maze.draw();
+  grid.draw();
 
-  if (!maze.completed) {
+  if (isGenerating && !maze.completed) {
     maze.mazeStep();
-  } else {
-    if (!solver) {
-      solver = new Solver(maze);
-    }
-
+  } else if (maze.completed) {
     solver.solveStep();
+  }
+}
+
+function createMaze() {
+  if (!isGenerating) {
+    maze.reset();
+    solver.reset();
+    isGenerating = true;
   }
 }
