@@ -18,71 +18,84 @@ class Maze {
     // Generate starting cell.
     this.current = this.cellArray[0][0];
     this.current.visited = true;
-    this.current.current = true;
-    this.visitedCells = 1;
-    this.stack = [];
+    this.wallList = [];
+    this.addCellWalls(this.current);
   }
+
+  addCellWalls(cell) {
+    if (cell.x > 0 && cell.walls[3]) {
+      this.wallList.push(new Wall(cell, 3));
+    }
+
+    if (cell.x < this.width - 1 && cell.walls[1]) {
+      this.wallList.push(new Wall(cell, 1));
+    }
+
+    if (cell.y > 0 && cell.walls[0]) {
+      this.wallList.push(new Wall(cell, 0));
+    }
+
+    if (cell.y < this.height - 1 && cell.walls[2]) {
+      this.wallList.push(new Wall(cell, 2));
+    }
+  }
+
+  getCellWallNeighbor(wall) {
+    const cell = wall.cell;
+    let neighborX = cell.x;
+    let neighborY = cell.y;
+
+    switch (wall.wall) {
+      case 0:
+        neighborY--;
+        break;
+      case 1:
+        neighborX++;
+        break;
+      case 2:
+        neighborY++;
+        break;
+      case 3:
+        neighborX--;
+        break;
+      default:
+        // Shouldn't get here.
+    }
+
+    return this.cellArray[neighborY][neighborX];
+  }
+
+  canBreakWall(wall) {
+    const neighbor = this.getCellWallNeighbor(wall);
+    return !neighbor.visited && wall.cell.visited;
+  }
+
+  breakWall(wall) {
+    const cell = wall.cell;
+    const neighbor = this.getCellWallNeighbor(wall);
+
+    cell.walls[wall.wall] = false;
+    neighbor.walls[(wall.wall + 2) % 4] = false;
+  }
+
 
   mazeStep() {
-    if (this.visitedCells < this.width * this.height) {
-      const unvisitedNeighbors = this.getUnvisitedNeighbors(this.current);
-      if (unvisitedNeighbors.length != 0) {
-        const neighbor = unvisitedNeighbors[Math.floor(Math.random() * unvisitedNeighbors.length)];
-        this.stack.push(this.current);
-        this.removeWall(this.current, neighbor);
-        this.current.current = false;
-        this.current = neighbor;
-        this.current.visited = true;
-        this.current.current = true;
-        this.visitedCells += 1;
-      } else if (this.stack.length != 0) {
-        this.current.current = false;
-        this.current = this.stack.pop();
-        this.current.current = true;
-      }
+    if (this.wallList.length != 0) {
+      do {
+        var wallIndex = Math.floor(Math.random() * this.wallList.length);
+        var wall = this.wallList[wallIndex];
+        this.wallList.splice(wallIndex, 1);
+      } while (!this.canBreakWall(wall) && this.wallList.length != 0);
 
+      if (this.canBreakWall(wall)) {
+        this.breakWall(wall);
+        const neighbor = this.getCellWallNeighbor(wall);
+        neighbor.visited = true;
+        this.addCellWalls(neighbor);
+      }
       return true;
     } else {
-      this.current.current = false;
       return false;
-    }
-  }
-
-  getUnvisitedNeighbors(cell) {
-    const neighbors = [];
-
-    if (cell.x > 0) {
-      neighbors.push(this.cellArray[cell.y][cell.x - 1]);
-    }
-
-    if (cell.x < this.width - 1) {
-      neighbors.push(this.cellArray[cell.y][cell.x + 1]);
-    }
-
-    if (cell.y > 0) {
-      neighbors.push(this.cellArray[cell.y - 1][cell.x]);
-    }
-
-    if (cell.y < this.height - 1) {
-      neighbors.push(this.cellArray[cell.y + 1][cell.x]);
-    }
-
-    return neighbors.filter(cell => !cell.visited);
-  }
-
-  removeWall(cellFrom, cellTo) {
-    if (cellFrom.x != cellTo.x) {
-      const left = cellFrom.x < cellTo.x ? cellFrom : cellTo;
-      const right = cellFrom.x < cellTo.x ? cellTo : cellFrom;
-
-      left.walls[1] = false;
-      right.walls[3] = false;
-    } else {
-      const top = cellFrom.y < cellTo.y ? cellFrom : cellTo;
-      const bottom = cellFrom.y < cellTo.y ? cellTo : cellFrom;
-
-      top.walls[2] = false;
-      bottom.walls[0] = false;
     }
   }
 
@@ -98,6 +111,13 @@ class Maze {
     noStroke();
     fill(0);
     text("<- Goal", this.cellWidth * this.width, this.cellWidth * (this.height - .25));
+  }
+}
+
+class Wall {
+  constructor(cell, wall) {
+    this.cell = cell;
+    this.wall = wall;
   }
 }
 
