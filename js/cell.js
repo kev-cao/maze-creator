@@ -5,8 +5,10 @@ class Cell {
     this.width = width;
     this.current = false;
     this.visited = false;
+    this.onGoalPath = false; // True if this cell is on the path to the end.
+    this.distance = Number.MAX_SAFE_INTEGER;
+    this.previous = undefined; // The prior cell on the shortest path from the start to this cell.
     this.walls = [true, true, true, true]; // Top, right, bottom, left
-
   }
 
   draw() {
@@ -23,6 +25,8 @@ class Cell {
 
     if (this.current) {
       fill(84, 172, 227);
+    } else if (this.onGoalPath) {
+      fill(0, 255, 0);
     } else if (this.visited) {
       fill(79, 114, 171);
     } else {

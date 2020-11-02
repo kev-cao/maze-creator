@@ -6,6 +6,7 @@ class Maze {
     this.height = height;
     this.cellWidth = cellWidth;
     this.cellArray = [];
+    this.completed = false;
     for (let r = 0; r < this.height; r++) {
       let row = []
       for (let c = 0; c < this.width; c++) {
@@ -16,10 +17,10 @@ class Maze {
     }
 
     // Generate starting cell.
-    this.current = this.cellArray[0][0];
-    this.current.visited = true;
+    const current = this.cellArray[0][0];
+    current.visited = true;
     this.wallList = [];
-    this.addCellWalls(this.current);
+    this.addCellWalls(current);
   }
 
   addCellWalls(cell) {
@@ -93,9 +94,8 @@ class Maze {
         neighbor.visited = true;
         this.addCellWalls(neighbor);
       }
-      return true;
     } else {
-      return false;
+      this.completed = true;
     }
   }
 
