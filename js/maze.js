@@ -1,6 +1,6 @@
 import { Cell } from './cell.js';
 
-class Grid {
+class Maze {
   constructor(width, height, cellWidth) {
     this.width = width;
     this.height = height;
@@ -102,4 +102,4 @@ class Grid {
 }
 
 
-export { Grid };
+export { Maze };
