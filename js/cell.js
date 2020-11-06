@@ -3,16 +3,20 @@ class Cell {
     this.x = x;
     this.y = y;
     this.width = width;
-    this.reset();
+    this.resetWalls();
+    this.resetFlags();
   }
 
-  reset() {
+  resetFlags() {
     this.current = false;
     this.visited = false;
     this.onGoalPath = false; // True if this cell is on the path to the end.
     this.goal = false; // True if this is the goal cell.
     this.distance = Number.MAX_SAFE_INTEGER;
     this.previous = undefined; // The prior cell on the shortest path from the start to this cell.
+  }
+
+  resetWalls() {
     this.walls = [true, true, true, true]; // Top, right, bottom, left
   }
 

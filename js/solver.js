@@ -7,7 +7,7 @@ class Solver {
   reset() {
     for (let i = 0; i < this.cellArray.length; i++) {
       for (let j = 0; j < this.cellArray[0].length; j++) {
-        this.cellArray[i][j].reset();
+        this.cellArray[i][j].resetFlags();
       }
     }
 
@@ -17,6 +17,7 @@ class Solver {
     this.current.distance = 0;
     this.toVisit = [this.current];
     this.lastCurrent = this.current;
+    this.completed = false;
   }
 
   solveStep() {
@@ -46,6 +47,8 @@ class Solver {
         }
         backtrack.onGoalPath = true;
       }
+    } else {
+      this.completed = true;
     }
   }
 

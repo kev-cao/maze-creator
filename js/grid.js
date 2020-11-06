@@ -27,7 +27,6 @@ class Grid {
     textSize(14);
     noStroke();
     fill(0);
-    text("<- Goal", this.cellWidth * this.width, this.cellWidth * (this.height - .25));
   }
 }
 
