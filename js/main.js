@@ -36,7 +36,6 @@ window.setup = function setup() {
 }
 
 window.draw = function draw() {
-  background(84, 172, 227);
   grid.draw();
 
 
